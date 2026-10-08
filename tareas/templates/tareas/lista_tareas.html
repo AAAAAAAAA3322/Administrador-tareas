@@ -1,0 +1,24 @@
+{% extends 'tareas/base.html' %}
+
+{% block titulo %}Tareas activas{% endblock %}
+
+{% block contenido %}
+<h1>Tareas activas</h1>
+
+{% for tarea in tareas %}
+    <div>
+        <h2>{{ tarea.nombre }}</h2>
+        <p>Estado: {{ tarea.estado.nombre }}</p>
+        <p>Fecha límite:
+            {% if tarea.fecha_limite %}{{ tarea.fecha_limite|date:"d/m/Y" }}{% else %}Sin fecha{% endif %}
+        </p>
+        <ul>
+            {% for objetivo in tarea.objetivos.splitlines %}
+                <li>{{ objetivo }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% empty %}
+    <p>No tienes tareas todavía.</p>
+{% endfor %}
+{% endblock %}

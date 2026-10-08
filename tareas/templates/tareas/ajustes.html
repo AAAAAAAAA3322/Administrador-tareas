@@ -1,0 +1,17 @@
+{% extends 'tareas/base.html' %}
+
+{% block titulo %}Ajustes{% endblock %}
+
+{% block contenido %}
+<h1>Ajustes</h1>
+
+{% for mensaje in messages %}
+    <p>{{ mensaje }}</p>
+{% endfor %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar cambios</button>
+</form>
+{% endblock %}

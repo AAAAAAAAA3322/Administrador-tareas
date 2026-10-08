@@ -1,0 +1,31 @@
+{% extends 'tareas/base.html' %}
+
+{% block cabecera %}
+<div class="solo-perfil">{% include 'tareas/_usuario.html' %}</div>
+{% endblock %}
+
+{% block contenido %}
+{% if user.is_authenticated %}
+<section>
+    <h2>Tareas a realizar <a href="{% url 'tareas_activas' %}">+</a></h2>
+    <ul>
+        {% for t in proximas %}
+            <li>{{ t.nombre }} — {{ t.fecha_limite|date:"d/m/Y" }}</li>
+        {% empty %}
+            <li>No hay tareas activas con fecha límite.</li>
+        {% endfor %}
+    </ul>
+</section>
+
+<section>
+    <a href="{% url 'calendario' %}" style="text-decoration:none; color:inherit;">
+        <h2>{{ mes_nombre }} {{ anio }}</h2>
+        {% include 'tareas/_calendario.html' with mini=True %}
+    </a>
+</section>
+{% else %}
+<p>Inicia sesión para ver tus tareas y tu calendario.</p>
+{% endif %}
+
+<p>Tú puedes con todo lo que te propongas. Nosotros estamos para ayudarte ;)</p>
+{% endblock %}

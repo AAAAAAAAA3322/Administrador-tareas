@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block titulo %}Planificador{% endblock %}</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; }
+        header { display: flex; align-items: center; gap: 24px; padding: 12px 24px;
+                 border-bottom: 2px solid #333; }
+        header a { text-decoration: none; color: #222; font-weight: bold; }
+        header .derecha { margin-left: auto; }
+        .solo-perfil { display: flex; justify-content: flex-end; padding: 16px 24px; }
+        .perfil { width: 38px; height: 38px; border: 2px solid #333; border-radius: 50%;
+                  display: flex; align-items: center; justify-content: center;
+                  text-decoration: none; color: #222; font-weight: bold;
+                  cursor: pointer; list-style: none; background: #fff; }
+        .perfil::-webkit-details-marker { display: none; }
+        .perfil-login { width: 110px; height: 110px; text-align: center; font-size: 15px; }
+        .usuario { position: relative; }
+        .menu-usuario { position: absolute; right: 0; top: 46px; z-index: 10; min-width: 170px;
+                        background: #fff; border: 2px solid #333; border-radius: 6px; padding: 6px; }
+        .menu-usuario a, .menu-usuario button { display: block; width: 100%; box-sizing: border-box;
+                        padding: 8px 10px; text-align: left; background: none; border: 0;
+                        font: inherit; color: #222; text-decoration: none; cursor: pointer; }
+        .menu-usuario a:hover, .menu-usuario button:hover { background: #eee; }
+        main { padding: 24px; }
+        table.cal { border-collapse: collapse; width: 100%; }
+        table.cal td, table.cal th { border: 1px solid #999; padding: 6px; vertical-align: top; }
+    </style>
+</head>
+<body>
+    {% block cabecera %}
+    <header>
+        {% block menu %}
+            <a href="{% url 'crear_tarea' %}">AGREGAR TAREA</a>
+            <a href="{% url 'calendario' %}">CALENDARIO</a>
+            <a href="{% url 'principal' %}">PÁGINA PRINCIPAL</a>
+        {% endblock %}
+        <div class="derecha">{% include 'tareas/_usuario.html' %}</div>
+    </header>
+    {% endblock %}
+    <main>
+        {% block contenido %}{% endblock %}
+    </main>
+</body>
+</html>

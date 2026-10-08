@@ -1,0 +1,16 @@
+{% extends 'tareas/base.html' %}
+
+{% block menu %}
+    <a href="{% url 'crear_tarea' %}">AGREGAR TAREA</a>
+    <a href="{% url 'tareas_activas' %}">TAREAS ACTIVAS</a>
+    <a href="{% url 'principal' %}">PÁGINA PRINCIPAL</a>
+{% endblock %}
+
+{% block contenido %}
+<h2>
+    <a href="{% url 'calendario_mes' anterior.year anterior.month %}">&larr;</a>
+    {{ mes_nombre }} {{ anio }}
+    <a href="{% url 'calendario_mes' siguiente.year siguiente.month %}">&rarr;</a>
+</h2>
+{% include 'tareas/_calendario.html' %}
+{% endblock %}

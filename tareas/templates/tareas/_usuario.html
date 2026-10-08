@@ -1,0 +1,14 @@
+{% if user.is_authenticated %}
+<details class="usuario">
+    <summary class="perfil" title="{{ user.username }}">{{ user.username|slice:":1"|upper }}</summary>
+    <div class="menu-usuario">
+        <a href="{% url 'ajustes' %}">Ajustes</a>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Cerrar sesión</button>
+        </form>
+    </div>
+</details>
+{% else %}
+<a class="perfil perfil-login" href="{% url 'login' %}">Iniciar sesión</a>
+{% endif %}
