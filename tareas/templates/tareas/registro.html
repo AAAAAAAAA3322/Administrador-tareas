@@ -1,18 +1,17 @@
 {% extends 'tareas/base.html' %}
 
-{% block titulo %}Iniciar sesión{% endblock %}
+{% block titulo %}Crear usuario{% endblock %}
 {% block cabecera %}{% endblock %}
 
 {% block contenido %}
-<h1>Iniciar sesión</h1>
+<h1>Crear usuario</h1>
 
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="hidden" name="next" value="{{ next }}">
-    <button type="submit">Entrar</button>
+    <button type="submit">Crear cuenta</button>
 </form>
 
-<p>¿No tienes cuenta? <a href="{% url 'registro' %}">Crear usuario</a></p>
+<p>¿Ya tienes cuenta? <a href="{% url 'login' %}">Iniciar sesión</a></p>
 <p><a href="{% url 'principal' %}">Volver a la página principal</a></p>
 {% endblock %}

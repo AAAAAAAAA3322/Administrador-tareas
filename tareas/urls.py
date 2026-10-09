@@ -9,6 +9,10 @@ urlpatterns = [
     path('ajustes/', views.ajustes, name='ajustes'),
     path('tareas/', views.lista_tareas, name='tareas_activas'),
     path('tareas/nueva/', views.crear_tarea, name='crear_tarea'),
+    path('tareas/<int:pk>/estado/', views.cambiar_estado, name='cambiar_estado'),
+    path('tareas/<int:pk>/ajustes/', views.editar_tarea, name='editar_tarea'),
+    path('tareas/<int:pk>/borrar/', views.borrar_tarea, name='borrar_tarea'),
     path('calendario/', views.calendario, name='calendario'),
     path('calendario/<int:anio>/<int:mes>/', views.calendario, name='calendario_mes'),
+        path('registro/', views.registro, name='registro'),
 ]

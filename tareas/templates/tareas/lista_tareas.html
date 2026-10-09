@@ -2,23 +2,65 @@
 
 {% block titulo %}Tareas activas{% endblock %}
 
+{% block menu %}
+    <a href="{% url 'crear_tarea' %}">AGREGAR TAREA</a>
+    <a href="{% url 'calendario' %}">CALENDARIO</a>
+    <a href="{% url 'principal' %}">PÁGINA PRINCIPAL</a>
+{% endblock %}
+
 {% block contenido %}
 <h1>Tareas activas</h1>
 
-{% for tarea in tareas %}
-    <div>
-        <h2>{{ tarea.nombre }}</h2>
-        <p>Estado: {{ tarea.estado.nombre }}</p>
-        <p>Fecha límite:
-            {% if tarea.fecha_limite %}{{ tarea.fecha_limite|date:"d/m/Y" }}{% else %}Sin fecha{% endif %}
-        </p>
-        <ul>
-            {% for objetivo in tarea.objetivos.splitlines %}
-                <li>{{ objetivo }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-{% empty %}
-    <p>No tienes tareas todavía.</p>
-{% endfor %}
+{% if tareas %}
+<div class="tarjetas">
+    {% for tarea in tareas %}
+    <article class="tarjeta">
+        <div class="parte nombre">
+            <h2>{{ tarea.nombre }}</h2>
+            <a class="tarjeta-ajustes" href="{% url 'editar_tarea' tarea.pk %}">Ajustes</a>
+        </div>
+        <div class="parte objetivos">
+            <ul>
+                {% for objetivo in tarea.objetivos.splitlines %}
+                    <li>{{ objetivo }}</li>
+                {% empty %}
+                    <li>Sin objetivos</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="parte pie">
+            <p>Fecha límite:
+                {% if tarea.fecha_limite %}{{ tarea.fecha_limite|date:"d/m/Y" }}{% else %}Sin fecha{% endif %}
+            </p>
+            <form method="post" action="{% url 'cambiar_estado' tarea.pk %}">
+                {% csrf_token %}
+                <label>Estado:
+                    <select name="estado" onchange="this.form.submit()">
+                        {% for e in estados %}
+                            <option value="{{ e.pk }}" {% if e.pk == tarea.estado_id %}selected{% endif %}>{{ e.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <noscript><button type="submit">Guardar</button></noscript>
+            </form>
+        </div>
+    </article>
+    {% endfor %}
+</div>
+
+<section>
+    <h2>Lista de vencimiento</h2>
+    <ol>
+        {% for tarea in tareas %}
+            <li>
+                {{ tarea.nombre }} —
+                {% if tarea.fecha_limite %}{{ tarea.fecha_limite|date:"d/m/Y" }}{% else %}Sin fecha{% endif %}
+                ({{ tarea.estado.nombre }})
+            </li>
+        {% endfor %}
+    </ol>
+</section>
+{% else %}
+    <p>No tienes tareas todavía. Pulsa AGREGAR TAREA para crear la primera.</p>
+{% endif %}
 {% endblock %}

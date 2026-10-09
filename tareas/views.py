@@ -1,20 +1,22 @@
 import calendar
 from datetime import date, timedelta
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
 from django.http import Http404
-from django.shortcuts import render, redirect
-
+from django.shortcuts import get_object_or_404, render, redirect
+from django.views.decorators.http import require_POST
 from .forms import TareaForm, AjustesForm
-from .models import Tarea
+from .models import Estado, Tarea
+from django.contrib.auth import login
+from .forms import TareaForm, AjustesForm, RegistroForm
 
 MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
 
 def datos_calendario(anio, mes, usuario):
-    """Semanas del mes; cada día lleva las tareas activas del usuario con fecha límite ese día."""
+    
     tareas = Tarea.objects.filter(
         usuario=usuario,
         estado__nombre='Activo',
@@ -50,8 +52,12 @@ def principal(request):
 @login_required
 def lista_tareas(request):
     tareas = (Tarea.objects.filter(usuario=request.user)
-              .select_related('estado').order_by('fecha_limite'))
-    return render(request, 'tareas/lista_tareas.html', {'tareas': tareas})
+              .select_related('estado')
+              .order_by(F('fecha_limite').asc(nulls_last=True)))
+    return render(request, 'tareas/lista_tareas.html', {
+        'tareas': tareas,
+        'estados': Estado.objects.all(),
+    })
 
 
 @login_required
@@ -99,3 +105,57 @@ def ajustes(request):
     else:
         form = AjustesForm(instance=request.user)
     return render(request, 'tareas/ajustes.html', {'form': form})
+
+
+@login_required
+@require_POST
+def cambiar_estado(request, pk):
+    tarea = get_object_or_404(Tarea, pk=pk, usuario=request.user)
+    estado_id = request.POST.get('estado', '')
+    if estado_id.isdigit():
+        tarea.estado = get_object_or_404(Estado, pk=int(estado_id))
+        tarea.save(update_fields=['estado'])
+    return redirect('tareas_activas')
+
+
+@login_required
+def editar_tarea(request, pk):
+    tarea = get_object_or_404(Tarea, pk=pk, usuario=request.user)
+    if request.method == 'POST':
+        form = TareaForm(request.POST, instance=tarea)
+        if form.is_valid():
+            form.save()
+            return redirect('tareas_activas')
+    else:
+        form = TareaForm(instance=tarea)
+    return render(request, 'tareas/editar_tarea.html', {'form': form, 'tarea': tarea})
+
+
+@login_required
+def borrar_tarea(request, pk):
+    tarea = get_object_or_404(Tarea, pk=pk, usuario=request.user)
+    if request.method == 'POST':
+        tarea.delete()
+        return redirect('tareas_activas')
+    return render(request, 'tareas/borrar_tarea.html', {'tarea': tarea})
+
+def registro(request):
+    if request.user.is_authenticated:
+        return redirect('principal')
+    if request.method == 'POST':
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            usuario = form.save()
+            login(request, usuario)
+            return redirect('principal')
+    else:
+        form = RegistroForm()
+    return render(request, 'tareas/registro.html', {'form': form})
+
+
+@login_required
+@require_POST
+def borrar_tarea(request, pk):
+    tarea = get_object_or_404(Tarea, pk=pk, usuario=request.user)
+    tarea.delete()
+    return redirect('tareas_activas')

@@ -1,0 +1,22 @@
+{% extends 'tareas/base.html' %}
+
+{% block titulo %}Ajustes de la tarea{% endblock %}
+
+{% block contenido %}
+<h1>Ajustes de la tarea</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar cambios</button>
+    <a href="{% url 'tareas_activas' %}">Cancelar</a>
+</form>
+
+<hr>
+
+<form method="post" action="{% url 'borrar_tarea' tarea.pk %}"
+      onsubmit="return confirm('¿Seguro que quieres borrar esta tarea? No se puede deshacer.');">
+    {% csrf_token %}
+    <button type="submit" class="boton-borrar">Borrar tarea</button>
+</form>
+{% endblock %}
