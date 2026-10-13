@@ -1,0 +1,19 @@
+<table class="cal">
+    <tr>
+        <th>L</th><th>M</th><th>X</th><th>J</th><th>V</th><th>S</th><th>D</th>
+    </tr>
+    {% for semana in semanas %}
+        <tr>
+            {% for celda in semana %}
+                <td>
+                    {% if celda.dia %}
+                        {{ celda.dia }}
+                        {% for t in celda.tareas %}
+                            {% if mini %}•{% else %}<br><small>{{ t.nombre }}</small>{% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>

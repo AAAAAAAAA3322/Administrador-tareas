@@ -1,0 +1,13 @@
+{% extends 'tareas/base.html' %}
+
+{% block contenido %}
+<h1>Nueva tarea</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar</button>
+</form>
+
+<a href="{% url 'tareas_activas' %}">Volver a las tareas</a>
+{% endblock %}
